@@ -1,7 +1,8 @@
 from datetime import timedelta
 from airflow import DAG
-
+import shutil
 from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
 
@@ -14,7 +15,12 @@ default_args = {
     'retries': 1,
     'retry_delay': timedelta(minutes=20),    
 }
+def my_func():
+    '''original = 'file.csv'
+    target = '/tmp/file.csv'
 
+    shutil.copyfile(original, target)'''
+    print('Works')
 
 with DAG(
     'Basic_DEMO',
@@ -25,24 +31,39 @@ with DAG(
     tags=['DEMO'],
 ) as dag:
 
+
+    task = BashOperator(
+        task_id='create_file',
+        bash_command='touch file.csv'
+    )
+    '''makedir = BashOperator(
+        task_id='mkdir',
+        bash_command='mkdir csvhandler '
+    )'''
     task1 = BashOperator(
         task_id='copy_file',
-        bash_command='cp /opt/file.csv /tmp/file.csv '
+        bash_command='python /usr/local/airflow/task.py '
     )
+
+
+    #task1 = PythonOperator(task_id='copy_file', python_callable=my_func)
+
 
     task2 = BashOperator(
         task_id='remove_old',
-        bash_command='rm /opt/file.csv '
+        bash_command='rm /tmp/tst.csv '
     )
 
+    
+
     task3 = BashOperator(
-        task_id='copy_renamed',
-        bash_command='mv /tmp/file.csv /opt/renamed.csv '
+        task_id='move_file',
+        bash_command='python /usr/local/airflow/moveFile.py -i /tmp/tst2.csv -o /tmp/renamed.csv '
     )
 
     task4 = BashOperator(
         task_id='copy_local',
-        bash_command='cp /opt/renamed.csv /opt/file.csv '
+        bash_command='cp /tmp/tst.csv /tmp/copy.csv '
     )
 
-task1 >> task2 >> task3 >> task4
+task >> task1 >> task2 >> task3 >> task4
