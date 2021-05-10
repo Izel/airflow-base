@@ -28,7 +28,7 @@ with DAG(
    
     task1 = BashOperator(
         task_id='copy_file',
-        bash_command='python /usr/local/airflow/task.py '
+        bash_command='python /tmp/task.py '
     )
 
     task2 = BashOperator(
@@ -38,7 +38,7 @@ with DAG(
 
     task3 = BashOperator(
         task_id='move_file',
-        bash_command='python /usr/local/airflow/moveFile.py -i /tmp/tst2.csv -o /tmp/renamed.csv '
+        bash_command='python /tmp/moveFile.py -i /tmp/tst2.csv -o /tmp/renamed.csv '
     )
 
     
