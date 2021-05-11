@@ -33,12 +33,12 @@ with DAG(
 
     task2 = BashOperator(
         task_id='remove_old',
-        bash_command='rm /tmp/tst.csv '
+        bash_command='rm /tmp/data/tst.csv '
     )
 
     task3 = BashOperator(
         task_id='move_file',
-        bash_command='python /tmp/moveFile.py -i /tmp/tst2.csv -o /tmp/renamed.csv '
+        bash_command='python /tmp/moveFile.py -i /tmp/data/tst2.csv -o /tmp/data/renamed.csv '
     )
 
     
